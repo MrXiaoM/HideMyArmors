@@ -1,0 +1,42 @@
+name: HideMyArmors
+version: '${version}'
+main: top.mrxiaom.sweetricebase.HideMyArmors
+api-version: 1.13
+depend: [ ProtocolLib ]
+authors: [ MrXiaoM ]
+commands:
+  hidemyarmors:
+    description: Reload plugin configuration.
+permissions:
+  hidemyarmors.hide.armors:
+    description: Hide your armors item
+    children:
+      - hidemyarmors.hide.head
+      - hidemyarmors.hide.chest
+      - hidemyarmors.hide.legs
+      - hidemyarmors.hide.feet
+    default: false
+  hidemyarmors.hide.hands:
+    description: Hide your hands item
+    children:
+      - hidemyarmors.hide.mainhand
+      - hidemyarmors.hide.offhand
+    default: false
+  hidemyarmors.hide.mainhand:
+    description: Hide your main hand item
+    default: false
+  hidemyarmors.hide.offhand:
+    description: Hide your off hand item
+    default: false
+  hidemyarmors.hide.head:
+    description: Hide your head item
+    default: false
+  hidemyarmors.hide.chest:
+    description: Hide your chest item
+    default: false
+  hidemyarmors.hide.legs:
+    description: Hide your legs item
+    default: false
+  hidemyarmors.hide.feet:
+    description: Hide your feet item
+    default: false

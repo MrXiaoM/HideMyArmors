@@ -1,0 +1,5 @@
+# 是否擦除实体装备信息
+# 开启此选项可避免作弊端查看玩家装备lore、附魔等信息
+# 依然可以查看装备物品类型、颜色、CustomModelData 等
+# 该选项对 MagicCosmetic 时装无效
+erase-entity-equipments-information: false
