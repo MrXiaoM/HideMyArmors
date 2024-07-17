@@ -43,14 +43,12 @@ public class EntityPacketAdapter extends PacketAdapter {
             StructureModifier<List<Pair<ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
             List<Pair<ItemSlot, ItemStack>> list = modifier.read(0);
             for (Pair<ItemSlot, ItemStack> pair : list) {
-                ItemSlot slot = pair.getFirst();
-                if (perm != null && perm.hasPermission("hidemyarmors.hide." + slot.name().toLowerCase())) {
+                if (checkHide(perm, pair.getFirst())) {
                     pair.setSecond(new ItemStack(Material.AIR));
                     continue;
                 }
                 if (plugin.eraseEquipmentsInfo) {
-                    ItemStack item = pair.getSecond();
-                    ItemStack newItem = eraseItemMeta(item);
+                    ItemStack newItem = eraseItemMeta(pair.getSecond());
                     if (newItem != null) {
                         pair.setSecond(newItem);
                     }
@@ -58,6 +56,26 @@ public class EntityPacketAdapter extends PacketAdapter {
             }
             modifier.write(0, list);
         }
+    }
+
+    private boolean checkHide(Permissible perm, ItemSlot slot) {
+        if (perm == null) return false;
+        if (perm.hasPermission("hidemyarmors.hide." + slot.name().toLowerCase())) return true;
+        return hasArmorsPerm(perm, slot) || hasHandsPerm(perm, slot);
+    }
+
+    private boolean hasArmorsPerm(Permissible perm, ItemSlot slot) {
+        return ((slot == ItemSlot.HEAD
+                || slot == ItemSlot.CHEST
+                || slot == ItemSlot.LEGS
+                || slot == ItemSlot.FEET)
+                && perm.hasPermission("hidemyarmors.hide.armors"));
+    }
+
+    private boolean hasHandsPerm(Permissible perm, ItemSlot slot) {
+        return ((slot == ItemSlot.MAINHAND
+                || slot == ItemSlot.OFFHAND)
+                && perm.hasPermission("hidemyarmors.hide.hands"));
     }
 
     private ItemStack eraseItemMeta(ItemStack item) {
