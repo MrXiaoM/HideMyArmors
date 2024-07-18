@@ -19,6 +19,7 @@ hidemyarmors.hide.hands 隐藏主副手物品
   hidemyarmors.hide.mainhand (子权限)隐藏主手物品
   hidemyarmors.hide.offhand (子权限)隐藏副手物品
 ```
+由于插件原理为劫持服务器的实体装备包进行修改，开关权限后并不立即生效，需要玩家重进游戏/切换世界/脱下再穿上装备才能生效。
 
 除此之外，本插件还提供了一个`擦除实体装备物品nbt标签`的功能，默认关闭，如有需要可到配置文件开启。重载命令为 `/hidemyarmors`
 

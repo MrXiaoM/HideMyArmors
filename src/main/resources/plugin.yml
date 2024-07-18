@@ -1,6 +1,6 @@
 name: HideMyArmors
 version: '${version}'
-main: top.mrxiaom.sweetricebase.HideMyArmors
+main: top.mrxiaom.hidemyarmors.HideMyArmors
 api-version: 1.13
 depend: [ ProtocolLib ]
 authors: [ MrXiaoM ]
