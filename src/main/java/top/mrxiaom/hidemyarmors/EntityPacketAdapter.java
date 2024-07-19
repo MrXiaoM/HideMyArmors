@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -41,21 +42,35 @@ public class EntityPacketAdapter extends PacketAdapter {
             Permissible perm = players.isEmpty() ? null : players.get(0);
 
             StructureModifier<List<Pair<ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
-            List<Pair<ItemSlot, ItemStack>> list = modifier.read(0);
-            for (Pair<ItemSlot, ItemStack> pair : list) {
-                if (checkHide(perm, pair.getFirst())) {
-                    pair.setSecond(new ItemStack(Material.AIR));
-                    continue;
-                }
-                if (plugin.eraseEquipmentsInfo) {
-                    ItemStack newItem = eraseItemMeta(pair.getSecond());
+            if (modifier.size() > 0) { // 1.16+ 新版本
+                List<Pair<ItemSlot, ItemStack>> list = modifier.readSafely(0);
+                for (Pair<ItemSlot, ItemStack> pair : list) {
+                    ItemStack newItem = modifyItem(perm, pair.getFirst(), pair.getSecond());
                     if (newItem != null) {
                         pair.setSecond(newItem);
                     }
                 }
+                modifier.write(0, list);
+            } else { // 1.8 - 1.15.2 等旧版本
+                ItemSlot slot = packet.getItemSlots().readSafely(0);
+                ItemStack item = packet.getItemModifier().readSafely(0);
+                ItemStack newItem = modifyItem(perm, slot, item);
+                if (newItem != null) {
+                    packet.getItemModifier().writeSafely(0, newItem);
+                }
             }
-            modifier.write(0, list);
         }
+    }
+
+    @Nullable
+    private ItemStack modifyItem(Permissible perm, ItemSlot slot, ItemStack item) {
+        if (checkHide(perm, slot)) {
+             return new ItemStack(Material.AIR);
+        }
+        if (plugin.eraseEquipmentsInfo) {
+            return eraseItemMeta(item);
+        }
+        return null;
     }
 
     private boolean checkHide(Permissible perm, ItemSlot slot) {
