@@ -4,16 +4,17 @@ plugins {
 }
 
 group = "top.mrxiaom"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
+    maven("https://repo.dmulloy2.net/repository/public/")
     maven("https://repo.codemc.io/repository/maven-public/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
 }
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0-SNAPSHOT")
     implementation("de.tr7zw:item-nbt-api:2.13.1")
     implementation("org.jetbrains:annotations:21.0.0")
 }
