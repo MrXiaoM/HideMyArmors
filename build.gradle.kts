@@ -14,7 +14,7 @@ repositories {
 }
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.2.0-SNAPSHOT")
     implementation("de.tr7zw:item-nbt-api:2.13.1")
     implementation("org.jetbrains:annotations:21.0.0")
 }
