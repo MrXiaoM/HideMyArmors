@@ -2,7 +2,7 @@ package top.mrxiaom.hidemyarmors;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.utility.MinecraftVersion;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,23 +15,32 @@ public class HideMyArmors extends JavaPlugin {
     protected boolean newVersion;
     protected boolean supportCMD;
     protected boolean twoHands;
+
+    @Override
+    public void onLoad() {
+        MinecraftVersion.replaceLogger(getLogger());
+        MinecraftVersion.disableUpdateCheck();
+        MinecraftVersion.disableBStats();
+        MinecraftVersion.getVersion();
+    }
+
     @Override
     public void onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(new EntityPacketAdapter(this));
-        MinecraftVersion ver = protocolManager.getMinecraftVersion();
+        com.comphenix.protocol.utility.MinecraftVersion ver = protocolManager.getMinecraftVersion();
         try {
-            newVersion = ver.isAtLeast(MinecraftVersion.NETHER_UPDATE);
+            newVersion = ver.isAtLeast(com.comphenix.protocol.utility.MinecraftVersion.NETHER_UPDATE);
         } catch (Throwable t) {
             newVersion = false;
         }
         try {
-            supportCMD = ver.isAtLeast(MinecraftVersion.VILLAGE_UPDATE);
+            supportCMD = ver.isAtLeast(com.comphenix.protocol.utility.MinecraftVersion.VILLAGE_UPDATE);
         } catch (Throwable t) {
             supportCMD = false;
         }
         try {
-            twoHands = ver.isAtLeast(MinecraftVersion.COMBAT_UPDATE);
+            twoHands = ver.isAtLeast(com.comphenix.protocol.utility.MinecraftVersion.COMBAT_UPDATE);
         } catch (Throwable t) {
             twoHands = false;
         }
