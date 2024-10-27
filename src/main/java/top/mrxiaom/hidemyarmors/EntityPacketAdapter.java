@@ -41,8 +41,9 @@ public class EntityPacketAdapter extends PacketAdapter {
             players.removeIf(it -> it.getEntityId() != entityId);
             Permissible perm = players.isEmpty() ? null : players.get(0);
 
-            StructureModifier<List<Pair<ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
-            if (modifier.size() > 0) { // 1.16+ 新版本
+            if (plugin.newVersion) { // 1.16+ 新版本
+                StructureModifier<List<Pair<ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
+
                 List<Pair<ItemSlot, ItemStack>> list = modifier.readSafely(0);
                 for (Pair<ItemSlot, ItemStack> pair : list) {
                     ItemStack newItem = modifyItem(perm, pair.getFirst(), pair.getSecond());
@@ -51,12 +52,16 @@ public class EntityPacketAdapter extends PacketAdapter {
                     }
                 }
                 modifier.write(0, list);
+
             } else { // 1.8 - 1.15.2 等旧版本
-                ItemSlot slot = packet.getItemSlots().readSafely(0);
-                ItemStack item = packet.getItemModifier().readSafely(0);
+                StructureModifier<ItemSlot> itemSlots = packet.getItemSlots();
+                StructureModifier<ItemStack> itemModifier = packet.getItemModifier();
+
+                ItemSlot slot = itemSlots.readSafely(0);
+                ItemStack item = itemModifier.readSafely(0);
                 ItemStack newItem = modifyItem(perm, slot, item);
                 if (newItem != null) {
-                    packet.getItemModifier().writeSafely(0, newItem);
+                    itemModifier.writeSafely(0, newItem);
                 }
             }
         }
