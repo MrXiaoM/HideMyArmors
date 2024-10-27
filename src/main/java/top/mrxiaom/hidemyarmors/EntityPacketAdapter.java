@@ -99,12 +99,12 @@ public class EntityPacketAdapter extends PacketAdapter {
     }
 
     private ItemStack eraseItemMeta(ItemStack item) {
-        if (item == null || item.getType().isAir()) return null;
+        if (item == null || item.getType().equals(Material.AIR)) return null;
         ItemMeta oldMeta = item.getItemMeta();
         if (oldMeta == null) return null;
 
         if (NBT.get(item, nbt -> {
-            boolean has = nbt.hasTag("magic_cosmetic"); // 1.20.5+
+            boolean has = nbt.hasTag("magic_cosmetic");
             if (has) return true;
             ReadableNBT tag = nbt.hasTag("tag", NBTType.NBTTagCompound) ? nbt.getCompound("tag") : null;
             return tag != null && tag.hasTag("magic_cosmetic");
@@ -125,8 +125,8 @@ public class EntityPacketAdapter extends PacketAdapter {
             if (oldMeta.hasEnchants()) {
                 meta.addEnchant(Enchantment.WATER_WORKER, 1919, true);
             }
-            if (oldMeta.hasCustomModelData()) {
-                meta.setCustomModelData(oldMeta.getCustomModelData());
+            if (plugin.supportCMD) { // 1.14+
+                CustomModelData.transfer(oldMeta, meta);
             }
         }
         newItem.setItemMeta(meta);
