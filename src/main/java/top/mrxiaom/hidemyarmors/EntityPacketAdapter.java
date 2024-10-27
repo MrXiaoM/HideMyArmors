@@ -5,7 +5,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import de.tr7zw.changeme.nbtapi.*;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import org.bukkit.Color;
@@ -41,8 +40,10 @@ public class EntityPacketAdapter extends PacketAdapter {
 
             if (plugin.newVersion) {
                 ModifierNewPacket.modify(packet, perm, this::modifyItem);
-            } else {
+            } else if (plugin.twoHands) {
                 ModifierOldPacket.modify(packet, perm, this::modifyItem);
+            } else {
+                ModifierVeryOldPacket.modify(packet, perm, this::modifyItem);
             }
         }
     }
@@ -52,7 +53,7 @@ public class EntityPacketAdapter extends PacketAdapter {
     }
 
     @Nullable
-    private ItemStack modifyItem(Permissible perm, ItemSlot slot, ItemStack item) {
+    private ItemStack modifyItem(Permissible perm, int slot, ItemStack item) {
         if (checkHide(perm, slot)) {
              return new ItemStack(Material.AIR);
         }
@@ -62,23 +63,24 @@ public class EntityPacketAdapter extends PacketAdapter {
         return null;
     }
 
-    private boolean checkHide(Permissible perm, ItemSlot slot) {
+    private final String[] slotsName = new String[] { "mainhand", "head", "chest", "legs", "feet", "offhand" };
+    private boolean checkHide(Permissible perm, int slot) {
         if (perm == null) return false;
-        if (perm.hasPermission("hidemyarmors.hide." + slot.name().toLowerCase())) return true;
+        if (perm.hasPermission("hidemyarmors.hide." + slotsName[slot])) return true;
         return hasArmorsPerm(perm, slot) || hasHandsPerm(perm, slot);
     }
 
-    private boolean hasArmorsPerm(Permissible perm, ItemSlot slot) {
-        return ((slot == ItemSlot.HEAD
-                || slot == ItemSlot.CHEST
-                || slot == ItemSlot.LEGS
-                || slot == ItemSlot.FEET)
+    private boolean hasArmorsPerm(Permissible perm, int slot) {
+        return ((slot == ModifierVeryOldPacket.SLOT_HEAD
+                || slot == ModifierVeryOldPacket.SLOT_CHEST
+                || slot == ModifierVeryOldPacket.SLOT_LEGS
+                || slot == ModifierVeryOldPacket.SLOT_FEET)
                 && perm.hasPermission("hidemyarmors.hide.armors"));
     }
 
-    private boolean hasHandsPerm(Permissible perm, ItemSlot slot) {
-        return ((slot == ItemSlot.MAINHAND
-                || slot == ItemSlot.OFFHAND)
+    private boolean hasHandsPerm(Permissible perm, int slot) {
+        return ((slot == ModifierVeryOldPacket.SLOT_HAND
+                || slot == ModifierVeryOldPacket.SLOT_OFF_HAND)
                 && perm.hasPermission("hidemyarmors.hide.hands"));
     }
 

@@ -9,16 +9,20 @@ import org.bukkit.permissions.Permissible;
 
 import java.util.List;
 
+import static top.mrxiaom.hidemyarmors.ModifierOldPacket.convertSlot;
+
 public class ModifierNewPacket {
     /**
      * 1.16+ 新版本
      */
-    public static void modify(PacketContainer packet, Permissible perm, EntityPacketAdapter.TriFunction<Permissible, EnumWrappers.ItemSlot, ItemStack, ItemStack> modifyItem) {
+    public static void modify(PacketContainer packet, Permissible perm, EntityPacketAdapter.TriFunction<Permissible, Integer, ItemStack, ItemStack> modifyItem) {
         StructureModifier<List<Pair<EnumWrappers.ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
 
         List<Pair<EnumWrappers.ItemSlot, ItemStack>> list = modifier.readSafely(0);
         for (Pair<EnumWrappers.ItemSlot, ItemStack> pair : list) {
-            ItemStack newItem = modifyItem.apply(perm, pair.getFirst(), pair.getSecond());
+            int slotNum = convertSlot(pair.getFirst());
+            if (slotNum == -1) continue;
+            ItemStack newItem = modifyItem.apply(perm, slotNum, pair.getSecond());
             if (newItem != null) {
                 pair.setSecond(newItem);
             }

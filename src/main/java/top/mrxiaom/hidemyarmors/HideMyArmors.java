@@ -14,6 +14,7 @@ public class HideMyArmors extends JavaPlugin {
     public boolean eraseEquipmentsInfo = false;
     protected boolean newVersion;
     protected boolean supportCMD;
+    protected boolean twoHands;
     @Override
     public void onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager();
@@ -28,6 +29,11 @@ public class HideMyArmors extends JavaPlugin {
             supportCMD = ver.isAtLeast(MinecraftVersion.VILLAGE_UPDATE);
         } catch (Throwable t) {
             supportCMD = false;
+        }
+        try {
+            twoHands = ver.isAtLeast(MinecraftVersion.COMBAT_UPDATE);
+        } catch (Throwable t) {
+            twoHands = false;
         }
         reloadConfig();
         getLogger().info("HideMyArmors 插件已启用");
