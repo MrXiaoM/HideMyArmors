@@ -5,9 +5,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-import com.comphenix.protocol.wrappers.Pair;
 import de.tr7zw.changeme.nbtapi.*;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import org.bukkit.Color;
@@ -41,30 +39,16 @@ public class EntityPacketAdapter extends PacketAdapter {
             players.removeIf(it -> it.getEntityId() != entityId);
             Permissible perm = players.isEmpty() ? null : players.get(0);
 
-            if (plugin.newVersion) { // 1.16+ 新版本
-                StructureModifier<List<Pair<ItemSlot, ItemStack>>> modifier = packet.getSlotStackPairLists();
-
-                List<Pair<ItemSlot, ItemStack>> list = modifier.readSafely(0);
-                for (Pair<ItemSlot, ItemStack> pair : list) {
-                    ItemStack newItem = modifyItem(perm, pair.getFirst(), pair.getSecond());
-                    if (newItem != null) {
-                        pair.setSecond(newItem);
-                    }
-                }
-                modifier.write(0, list);
-
-            } else { // 1.8 - 1.15.2 等旧版本
-                StructureModifier<ItemSlot> itemSlots = packet.getItemSlots();
-                StructureModifier<ItemStack> itemModifier = packet.getItemModifier();
-
-                ItemSlot slot = itemSlots.readSafely(0);
-                ItemStack item = itemModifier.readSafely(0);
-                ItemStack newItem = modifyItem(perm, slot, item);
-                if (newItem != null) {
-                    itemModifier.writeSafely(0, newItem);
-                }
+            if (plugin.newVersion) {
+                ModifierNewPacket.modify(packet, perm, this::modifyItem);
+            } else {
+                ModifierOldPacket.modify(packet, perm, this::modifyItem);
             }
         }
+    }
+
+    public interface TriFunction<A, B, C, R> {
+        R apply(A a, B b, C c);
     }
 
     @Nullable

@@ -19,8 +19,16 @@ public class HideMyArmors extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(new EntityPacketAdapter(this));
         MinecraftVersion ver = protocolManager.getMinecraftVersion();
-        newVersion = ver.isAtLeast(MinecraftVersion.NETHER_UPDATE);
-        supportCMD = ver.isAtLeast(MinecraftVersion.VILLAGE_UPDATE);
+        try {
+            newVersion = ver.isAtLeast(MinecraftVersion.NETHER_UPDATE);
+        } catch (Throwable t) {
+            newVersion = false;
+        }
+        try {
+            supportCMD = ver.isAtLeast(MinecraftVersion.VILLAGE_UPDATE);
+        } catch (Throwable t) {
+            supportCMD = false;
+        }
         reloadConfig();
         getLogger().info("HideMyArmors 插件已启用");
     }
